@@ -42,7 +42,7 @@ app.get('/lightsoff', function (req, res) {
 })
 
 var server = app.listen(38085, function () {
-    fs.readFile("./auth/hue-auth.txt", {encoding: 'utf-8'}, function(err,data){
+    fs.readFile(`${__dirname}/auth/hue-auth.txt`, {encoding: 'utf-8'}, function(err,data){
         if (!err) {
             hueUsername = data.trim();
         } else {
