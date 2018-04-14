@@ -15,34 +15,43 @@ var getApi = function () {
     });
 }
 
-var setLightState = function (api, state) {
+var setLightState = function (api, state, lightName) {
     api.lights(function (err, lights) {
         for (var light of lights["lights"]) {
-            api.setLightState(light["id"], state);
+            if (light.name === lightName || !lightName) {
+                api.setLightState(light["id"], state);
+            }
         }
     });
 }
 
-var turnLightsOn = function (api) {
+var turnAllLightsOn = function (api) {
     setLightState(api, lightStateOn);
+    return api;
 }
 
-var turnLightsOff = function (api) {
+var turnAllLightsOff = function (api) {
     setLightState(api, lightStateOff);
+    return api;
 }
 
 app.get('/lightson', function (req, res) {
-    getApi().then(turnLightsOn).done();
+    getApi().then(turnAllLightsOn).done();
     res.end();
 })
 
 app.get('/lightsoff', function (req, res) {
-    getApi().then(turnLightsOff).done();
+    getApi().then(turnAllLightsOff).done();
+    res.end();
+})
+
+app.get('/onlybedroomlighton', function (req, res) {
+    getApi().then(turnAllLightsOff).then(api => setLightState(api, lightStateOn, "Bedside Table Lamp")).done();
     res.end();
 })
 
 var server = app.listen(38085, function () {
-    fs.readFile(`${__dirname}/auth/hue-auth.txt`, {encoding: 'utf-8'}, function(err,data){
+    fs.readFile(`${__dirname}/auth/hue-auth.txt`, { encoding: 'utf-8' }, function (err, data) {
         if (!err) {
             hueUsername = data.trim();
         } else {
