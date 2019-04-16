@@ -45,8 +45,8 @@ app.get('/lightsoff', function (req, res) {
     res.end();
 })
 
-app.get('/onlybedroomlighton', function (req, res) {
-    getApi().then(turnAllLightsOff).then(api => setLightState(api, lightStateOn, "Bedside Table Lamp")).done();
+app.get('/livingroomlightson', function (req, res) {
+    getApi().then(api => setLightState(api, lightStateOn, "Fireplace 1")).then(api => setLightState(api, lightStateOn, "Fireplace 2")).done();
     res.end();
 })
 
