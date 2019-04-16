@@ -15,10 +15,10 @@ var getApi = function () {
     });
 }
 
-var setLightState = function (api, state, lightName) {
+var setLightState = function (api, state, lightNames) {
     api.lights(function (err, lights) {
         for (var light of lights["lights"]) {
-            if (light.name === lightName || !lightName) {
+            if (!lightNames || (lightNames && lightNames.indexOf(light.name) > -1)) {
                 api.setLightState(light["id"], state);
             }
         }
@@ -35,6 +35,11 @@ var turnAllLightsOff = function (api) {
     return api;
 }
 
+var turnLivingRoomLightsOn = function (api) {
+    setLightState(api, lightStateOn, ["Fireplace 1", "Fireplace 2"]);
+    return api;
+}
+
 app.get('/lightson', function (req, res) {
     getApi().then(turnAllLightsOn).done();
     res.end();
@@ -46,7 +51,7 @@ app.get('/lightsoff', function (req, res) {
 })
 
 app.get('/livingroomlightson', function (req, res) {
-    getApi().then(api => setLightState(api, lightStateOn, "Fireplace 1")).then(api => setLightState(api, lightStateOn, "Fireplace 2")).done();
+    getApi().then(turnLivingRoomLightsOn).done();
     res.end();
 })
 
